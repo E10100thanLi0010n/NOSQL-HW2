@@ -40,9 +40,10 @@ int  main()
     */
    
    struct HashTable* ht=initHashTable();
-
-   insert(ht,"a123456789","aqpqpqpqpe");
-
+    char* str1="9487948712";
+    char* str2="5566aa5566";
+    insert(ht,str1,str2);
+    printf("answer : %s is %s \n",str1,get(ht,str1));
 
 
 

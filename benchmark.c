@@ -2,6 +2,8 @@
 
 #include"benchmark.h"
 
+unsigned int LEFT=0;
+
 
 //generate random string 
 char* generate_random_string(int length) 
@@ -68,7 +70,7 @@ void analysisTable_regenData(struct HashTable *ht)
 
 void test(struct DataBase *db)
 {   
-
+    int length=10;
     //input 10^5(10w) data
     for(int i=0;i<100;i++)
     {
@@ -76,15 +78,22 @@ void test(struct DataBase *db)
         for(int i=0;i<1000;i++) //insert(MainHash(db,key),generate_random_string(),generate_random_string());
         {
             //char* generate_random_string(int length) 
-            int length=10;
+            
             char* key=generate_random_string(length);
             //unsigned int main_hash_function(char* key)
             insert(db->index[main_hash_function(key)],key,generate_random_string(length));
         }
         //then, check deleted key-value and regenerate.
-        analysisTable_regenData(db);
+        /*
+        while(LEFT!=0)
+        {
+            char* key=generate_random_string(length);
+            //insert_LEFT_KEY(db->index[main_hash_function(key)],key,generate_random_string(length));
+            
 
-        
+
+        }
+        */
 
         //give feedback to databse so that next round avoids happening data skew.
 

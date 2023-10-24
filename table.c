@@ -82,22 +82,53 @@ char* generate_random_string(int length)
 }
 */
 
+// struct KeyValue* create_KV(void)
+// {
+//     struct KeyValue* newkv = (struct KeyValue*)malloc(sizeof(struct KeyValue));
+//     newkv->key = (char*)malloc(11);
+//     newkv->value = (char*)malloc(11);
+//     //newkv->key=strdup(key);
+//     //newkv->value=strdup(value);
+
+//     if (newkv->key == NULL || newkv->value == NULL)
+//     {
+//         if (newkv->key != NULL) free(newkv->key);
+//         if (newkv->value != NULL) free(newkv->value);
+//         free(newkv);
+//         return NULL;
+//     }
+
+//     //strncpy(newkv->key,key,10);
+//     //strncpy(newkv->value, value,10);
+//     newkv->isDeleted=0;
+//     return newkv;
+// }
+
 struct KeyValue* create_KV(char* key, char* value)
 {
     struct KeyValue* newkv = (struct KeyValue*)malloc(sizeof(struct KeyValue));
-    newkv->key = (char*)malloc(10);
-    newkv->value = (char*)malloc(10);
+    //newkv->key = (char*)malloc(strlen(key)+1);
+    //newkv->value = (char*)malloc(strlen(value)+1);
+    //newkv->key=strdup(key);
+    //newkv->value=strdup(value);
 
-    if (newkv->key == NULL || newkv->value == NULL)
+    // if (newkv->key == NULL || newkv->value == NULL)
+    // {
+    //     if (newkv->key != NULL) free(newkv->key);
+    //     if (newkv->value != NULL) free(newkv->value);
+    //     free(newkv);
+    //     return NULL;
+    // }
+
+    
+    if(newkv)
     {
-        if (newkv->key != NULL) free(newkv->key);
-        if (newkv->value != NULL) free(newkv->value);
-        free(newkv);
-        return NULL;
+        strncpy(newkv->key, key, sizeof(newkv->key) - 1); // 避免溢出
+        strncpy(newkv->value, value, sizeof(newkv->value) - 1); // 避免溢出
     }
 
-    strncpy(newkv->key,key,10);
-    strncpy(newkv->value, value,10);
+    //strncpy(newkv->key,key,10);
+    //strncpy(newkv->value, value,10);
     newkv->isDeleted=0;
     return newkv;
 }
@@ -108,21 +139,34 @@ struct HashTable* initHashTable(void)
     struct HashTable *ht=(struct HashTable*)malloc(sizeof(struct HashTable));
 
 
-    if(ht==NULL) return;
+    if(ht==NULL) return NULL;
 
 
     ht->tablesize=INITIAL_TABLE_SIZE;
     ht->table=(KeyValue**)calloc(INITIAL_TABLE_SIZE,sizeof(struct KeyValue*));
-
+    //ht->table=(KeyValue*)calloc(INITIAL_TABLE_SIZE,sizeof(struct KeyValue));
     if(ht->table==NULL) 
     {
         free(ht->table);
-        return;
+        printf("create table failed. \n");
+        return NULL;
     }
-
+        //ht->table[1000] = (char*)malloc(2);
     for (int i = 0; i < ht->tablesize; i++)
     {
-        ht->table[i] = create_KV(NULL,NULL);
+        ht->table[i]=(struct KeyValue*)malloc(sizeof(struct KeyValue));
+        ht->table[i]->isDeleted=0;
+
+        // if (ht->table[i] != NULL) 
+        // {
+        // *(ht->table[1000]) =create_KV(NULL,NULL);
+        // } else {
+        // printf("ggwp \n");
+        // }
+        // ht->table[i]->isDeleted=0;
+        //ht->table[i]->key=NULL;
+        //ht->table[i]->value=NULL;
+        //ht->table[i] = create_KV(NULL,NULL);
         if (ht->table[i] == NULL) 
         {
             for (int j = 0; j < i; j++) 
@@ -146,12 +190,13 @@ void resize(struct HashTable* ht)
 
     int newSize =ht->tablesize* 2;
     struct KeyValue** newTable = (struct KeyValue**)malloc(sizeof(struct KeyValue*) * newSize);
-
+    //struct KeyValue* newTable = (struct KeyValue*)malloc(sizeof(struct KeyValue) * newSize);
     if(!newTable) return;
 
       for (int i = 0; i < newSize; i++) 
       {
-        newTable[i] = (struct KeyValue*)malloc(sizeof(struct KeyValue));
+        //newTable[i] = (struct KeyValue*)malloc(sizeof(struct KeyValue));
+        newTable[i]=create_KV(NULL,NULL);
         if (newTable[i] == NULL) 
         {
             for (int j = 0; j < i; j++) 
@@ -161,7 +206,8 @@ void resize(struct HashTable* ht)
             free(newTable);
             return;
         }
-        newTable[i]->key = NULL;
+        // newTable[i]->key = NULL;
+        strcpy(newTable[i]->key, "");
         newTable[i]->isDeleted = 0;
     }
 
@@ -209,7 +255,7 @@ void insert(HashTable* ht, char* key,char* value)
     while(ht->table[index]->key!=NULL) //there is a keyvalue in corresponding position.
     {
         if(ht->table[index]->isDeleted && deleteindex==-1)
-        deleteindex=index;
+            deleteindex=index;
 
         index=(index+1)%(ht->tablesize);
 
@@ -230,9 +276,11 @@ void insert(HashTable* ht, char* key,char* value)
         index = deleteindex;
         ht->table[index]->isDeleted = 0;
     }
-
-    ht->table[index]->key=strdup(key);
-    ht->table[index]->value=strdup(value);
+    ht->table[index]=newKV;
+    // ht->table[index]->key=strdup(key);
+    // ht->table[index]->value=strdup(value);
+    strncpy(ht->table[index]->key, key, sizeof(newKV->key) - 1); // 避免溢出
+    strncpy(ht->table[index]->value, value, sizeof(newKV->value) - 1); // 避免溢出
     ht->size++;
     if((float)ht->size/ht->tablesize> LOAD_FACTOR)
     resize(ht);
@@ -244,7 +292,7 @@ void insert(HashTable* ht, char* key,char* value)
 //get data from table
 char* get(HashTable* ht, char* key)
 {
-    int index = MurmurHash3_x86_32(key,10,SEED); //KEY LENGTH=10
+    int index = MurmurHash3_x86_32(key,10,SEED)%(ht->tablesize); //KEY LENGTH=10
     int initindex=index;
 
     while (ht->table[index]->key != NULL)
@@ -304,7 +352,7 @@ void updateValue(struct HashTable* ht,char* key)
             if (strlen(newstr) < newstr_len)
             {
                 strcpy(currKV->value, newstr);
-                printf("updated data at index %d is : %s\n", key, currKV->value);
+                printf("updated data at index %s is : %s\n", key, currKV->value);
             }
             else
             {
@@ -320,7 +368,7 @@ void updateValue(struct HashTable* ht,char* key)
     }
 
 
-    for (int i = 0; i < ht->table; i++)
+    for (int i = 0; i < ht->tablesize; i++)
     {
         if (strcmp(ht->table[i]->key,key)==0)
         {
@@ -361,21 +409,25 @@ void updateValue(struct HashTable* ht,char* key)
 //delete
 void freeKV(struct KeyValue* kv)
 {
-    if (kv != NULL)
-    {
+    // if (kv != NULL)
+    // {
 
-        if (kv->value != NULL)
-        {
-            free(kv->value);
-            free(kv->key);
-            kv->value = NULL;
-            kv->key==NULL;
-        }
+    //     if (kv->value != NULL)
+    //     {
+    //         free(kv->value);
+    //         free(kv->key);
+    //         kv->value = NULL;
+    //         kv->key=NULL;
+    //     }
 
-    }
+    // }
 
     //free(kv->value);
     free(kv);
+    
+
+
+
 }
 
 

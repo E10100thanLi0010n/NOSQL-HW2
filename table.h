@@ -8,26 +8,26 @@
 #include <time.h>
 #include<stdint.h>
 
-#define INITIAL_TABLE_SIZE 10 
+#define INITIAL_TABLE_SIZE 5000 
 #define LOAD_FACTOR 0.8 
 #define INDEX_LENGTH 50 //
 #define ROTL32(x, y) (((x) << (y)) | ((x) >> (32 - (y)))
 #define SEED 40
+#define LENGTH 10
 
 
-
-typedef struct KeyValue {
-    char* key;
-    char* value;
+typedef struct KeyValue{
+    char key[LENGTH+1];
+    char value[LENGTH+1];
     int isDeleted;
-} KeyValue;
+}KeyValue;
 
-typedef struct HashTable {
+typedef struct HashTable{
     KeyValue **table; //FIXME : or *table??
     int size;
     int tablesize;
 
-} HashTable;
+}HashTable;
 
 
 typedef struct DataBase{
@@ -48,7 +48,7 @@ unsigned int main_hash_function(char* key);
 
 //char* generate_random_string(int length);
 uint16_t MurmurHash3_x86_32( void *key, int len, uint32_t seed) ;
-struct KeyValue* create_KV(char* key, char* value);
+struct KeyValue* create_KV(char* key,char* value);
 struct HashTable* initHashTable(void);
 void resize(HashTable* ht);
 void insert(HashTable* ht, char* key,char* value); 
@@ -56,7 +56,7 @@ char* get(HashTable* ht, char* key);
 void freetable(struct HashTable* ht);
 void freeKV(struct KeyValue* kv);
 void deleteKV(HashTable *ht,char* key);
-struct KeyValue* create_KV(char* key, char* value);
+//struct KeyValue* create_KV(char* key, char* value);
 void updateValue(struct HashTable* ht, char* key);
 
 
