@@ -9,7 +9,7 @@ HEADERS	=	table.h	benchmark.h
 all:	$(TARGET)
 
 $(TARGET):	$(SRC)	$(HEADERS)
-	$(CC)	$(CFLAGS)	-o	$(TARGET)	$(SRC)
+	$(CC)	$(CFLAGS)	-o	$(TARGET)	$(SRC)	-lhiredis
 
 clean:
 	rm	-f	$(TARGET)

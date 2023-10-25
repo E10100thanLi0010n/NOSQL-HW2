@@ -42,12 +42,24 @@ int  main()
    struct HashTable* ht=initHashTable();
     char* str1="9487948712";
     char* str2="5566aa5566";
-    insert(ht,str1,str2);
-    printf("answer : %s is %s \n",str1,get(ht,str1));
+    char* str3="9487948712";
+    char* str4="8787878787";
 
 
+    // for(int i=0;i<1000;i++)
+    // insert(ht,generate_random_string(10),generate_random_string(10));
+    //printf("answer : %s is %s \n",str1,get(ht,str1));
+     //insert(ht,str1,str2);
+     //insert(ht,str4,str3);
+     //printf("str1 is: %s\n",get(ht,str1));
+     //showTable(ht);
+    // deleteKV(ht,str4);
+    // showTable(ht);
+     printf("\n");
 
-
+    //RedisTest();
+    test(ht);
+    //showTable(ht);
 
    /*
     double exectime=measExecuTime(main);

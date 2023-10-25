@@ -56,10 +56,9 @@ char* get(HashTable* ht, char* key);
 void freetable(struct HashTable* ht);
 void freeKV(struct KeyValue* kv);
 void deleteKV(HashTable *ht,char* key);
-//struct KeyValue* create_KV(char* key, char* value);
 void updateValue(struct HashTable* ht, char* key);
-
-
+void showTable(struct HashTable* ht);
+void insert_LEFT(HashTable* , char* ,char* );
 
 
 

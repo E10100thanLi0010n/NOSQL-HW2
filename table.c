@@ -61,26 +61,7 @@ uint16_t MurmurHash3_x86_32( void *key, int len, uint32_t seed)
 
     return (uint16_t)h1;
 }
-/*
-//generate random string 
-char* generate_random_string(int length) 
-{
-    char charset[] = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
-    char* random_string = (char*)malloc(length + 1);
 
-    if (random_string) 
-    {
-        for (int i = 0; i < length; i++) 
-        {
-            int index = rand() % (sizeof(charset) - 1);
-            random_string[i] = charset[index];
-        }
-        random_string[length] = '\0';
-    }
-
-    return random_string;
-}
-*/
 
 // struct KeyValue* create_KV(void)
 // {
@@ -107,28 +88,20 @@ char* generate_random_string(int length)
 struct KeyValue* create_KV(char* key, char* value)
 {
     struct KeyValue* newkv = (struct KeyValue*)malloc(sizeof(struct KeyValue));
-    //newkv->key = (char*)malloc(strlen(key)+1);
-    //newkv->value = (char*)malloc(strlen(value)+1);
-    //newkv->key=strdup(key);
-    //newkv->value=strdup(value);
 
-    // if (newkv->key == NULL || newkv->value == NULL)
-    // {
-    //     if (newkv->key != NULL) free(newkv->key);
-    //     if (newkv->value != NULL) free(newkv->value);
-    //     free(newkv);
-    //     return NULL;
-    // }
-
-    
-    if(newkv)
+    if(newkv==NULL)
     {
-        strncpy(newkv->key, key, sizeof(newkv->key) - 1); // 避免溢出
-        strncpy(newkv->value, value, sizeof(newkv->value) - 1); // 避免溢出
-    }
+        printf("allocated failed \n");
+        free(newkv);
+        return NULL;
 
-    //strncpy(newkv->key,key,10);
-    //strncpy(newkv->value, value,10);
+    }
+    
+    
+    strncpy(newkv->key, key, sizeof(newkv->key) -1); // 避免溢出
+    strncpy(newkv->value, value, sizeof(newkv->value)-1); // 避免溢出
+    //strncpy(newkv->key, key,10); 
+    //strncpy(newkv->value, value, 10); 
     newkv->isDeleted=0;
     return newkv;
 }
@@ -138,45 +111,39 @@ struct HashTable* initHashTable(void)
 {
     struct HashTable *ht=(struct HashTable*)malloc(sizeof(struct HashTable));
 
-
     if(ht==NULL) return NULL;
 
 
     ht->tablesize=INITIAL_TABLE_SIZE;
-    ht->table=(KeyValue**)calloc(INITIAL_TABLE_SIZE,sizeof(struct KeyValue*));
+    ht->table=(struct KeyValue**)calloc(INITIAL_TABLE_SIZE,sizeof(struct KeyValue*));
     //ht->table=(KeyValue*)calloc(INITIAL_TABLE_SIZE,sizeof(struct KeyValue));
     if(ht->table==NULL) 
     {
-        free(ht->table);
+        free(ht);
         printf("create table failed. \n");
         return NULL;
     }
         //ht->table[1000] = (char*)malloc(2);
     for (int i = 0; i < ht->tablesize; i++)
     {
-        ht->table[i]=(struct KeyValue*)malloc(sizeof(struct KeyValue));
-        ht->table[i]->isDeleted=0;
-
-        // if (ht->table[i] != NULL) 
+        // ht->table[i]=(struct KeyValue*)malloc(sizeof(struct KeyValue));
+        // if (ht->table[i] == NULL) 
         // {
-        // *(ht->table[1000]) =create_KV(NULL,NULL);
-        // } else {
-        // printf("ggwp \n");
+        //     for (int j = 0; j < i; j++) 
+        //     {
+        //         free(ht->table[j]);
+        //     }
+        //     free(ht->table);
+        //     free(ht);
+        //     return NULL;
         // }
-        // ht->table[i]->isDeleted=0;
-        //ht->table[i]->key=NULL;
-        //ht->table[i]->value=NULL;
+        
+        // ht->table[i]->key[0]='\0';
+        // ht->table[i]->value[0]='\0';
+        ht->table[i] = create_KV("", "");
+        ht->table[i]->isDeleted=0;
         //ht->table[i] = create_KV(NULL,NULL);
-        if (ht->table[i] == NULL) 
-        {
-            for (int j = 0; j < i; j++) 
-            {
-                free(ht->table[j]);
-            }
-            free(ht->table);
-            free(ht);
-            return NULL;
-        }
+        
 
     }
     ht->size =0;
@@ -189,25 +156,18 @@ void resize(struct HashTable* ht)
 {
 
     int newSize =ht->tablesize* 2;
-    struct KeyValue** newTable = (struct KeyValue**)malloc(sizeof(struct KeyValue*) * newSize);
+    struct KeyValue** newTable = (struct KeyValue**)calloc(newSize,sizeof(struct KeyValue*));
     //struct KeyValue* newTable = (struct KeyValue*)malloc(sizeof(struct KeyValue) * newSize);
     if(!newTable) return;
 
       for (int i = 0; i < newSize; i++) 
       {
         //newTable[i] = (struct KeyValue*)malloc(sizeof(struct KeyValue));
-        newTable[i]=create_KV(NULL,NULL);
-        if (newTable[i] == NULL) 
-        {
-            for (int j = 0; j < i; j++) 
-            {
-                free(newTable[j]);
-            }
-            free(newTable);
-            return;
-        }
+        newTable[i]=create_KV("","");
+        //newTable[i]->isDeleted=0;
+       
         // newTable[i]->key = NULL;
-        strcpy(newTable[i]->key, "");
+        //strcpy(newTable[i]->key, "");
         newTable[i]->isDeleted = 0;
     }
 
@@ -216,12 +176,14 @@ void resize(struct HashTable* ht)
     for (int i = 0; i < ht->tablesize; i++)
     {
 
-        if(ht->table[i]->key!=NULL && !ht->table[i]->isDeleted)
+        if(ht->table[i]!=NULL && !ht->table[i]->isDeleted && ht->table[i]->key[0]!='\0')
         {
-            int index=MurmurHash3_x86_32(ht->table[i]->key,newSize,SEED);
+            int index=MurmurHash3_x86_32(ht->table[i]->key,newSize,SEED)% newSize;
 
-            while(newTable[index]->key!=NULL)
+            while(newTable[index]->key[0] != '\0')
+            {
                 index=(index+1)%newSize;
+            }   
 
             strncpy(newTable[index]->key,ht->table[i]->key,10);
             strncpy(newTable[index]->value,ht->table[i]->value,10);
@@ -230,6 +192,9 @@ void resize(struct HashTable* ht)
     }
     printf("now current size is : %d\n",newSize);
     
+    for(int i=0;i<ht->tablesize;i++)
+        freeKV(ht->table[i]);
+
     free(ht->table);
     ht->tablesize=newSize;
     ht->table=newTable;
@@ -249,44 +214,112 @@ void insert(HashTable* ht, char* key,char* value)
     //struct HashTable *ht = &mainHashtables[mainHash].subtables[subHash];
     int index = MurmurHash3_x86_32(key,10,SEED)%(ht->tablesize); //KEY LENGTH=10
     struct KeyValue *newKV = create_KV(key, value);
-    int deleteindex=-1;
+    //int deleteindex=-1;
     int initindex=index;
 
-    while(ht->table[index]->key!=NULL) //there is a keyvalue in corresponding position.
-    {
-        if(ht->table[index]->isDeleted && deleteindex==-1)
-            deleteindex=index;
+    // while(ht->table[index]->key!=NULL) //there is a keyvalue in corresponding position.
+    // {
+    //     if(ht->table[index]->isDeleted && deleteindex==-1)
+    //         deleteindex=index;
 
-        index=(index+1)%(ht->tablesize);
+    //     index=(index+1)%(ht->tablesize);
 
-        //table is full
-        if(index==initindex) 
+    //     //table is full
+    //     if(index==initindex) 
+    //     {
+    //         printf("this table is full\n");
+    //         LEFT_KEY++; //store non-stored key
+    //         free(newKV);
+    //         return; 
+
+    //     }
+
+    // }
+ 
+    // if (deleteindex != -1)
+    // {
+    //     index = deleteindex;
+    //     ht->table[index]->isDeleted = 0;
+    // }
+
+
+     while (ht->table[index] != NULL) 
+     {
+        if (ht->table[index]->isDeleted) 
         {
-            printf("this table is full\n");
-            LEFT_KEY++; //store non-stored key
-            free(newKV);
-            return; 
-
+            break;
         }
 
+        if (strcmp(ht->table[index]->key, key) == 0) 
+        {
+            // Key already exists, update the value if needed
+            strncpy(ht->table[index]->value, value, sizeof(ht->table[index]->value) - 1);
+            return;
+        }else
+        {   
+            strncpy(ht->table[index]->key, key, sizeof(ht->table[index]->key) - 1); // 避免溢出
+            strncpy(ht->table[index]->value, value, sizeof(ht->table[index]->value) - 1); // 避免溢出
+
+            break;
+        }  
+        index = (index + 1) % (ht->tablesize);
+        if (index == initindex) 
+        {
+            printf("The table is full\n");
+            LEFT_KEY++; // Store non-stored keys
+            return;
+        }
     }
- 
-    if (deleteindex != -1)
-    {
-        index = deleteindex;
-        ht->table[index]->isDeleted = 0;
-    }
-    ht->table[index]=newKV;
+    //ht->table[index]=newKV;
     // ht->table[index]->key=strdup(key);
     // ht->table[index]->value=strdup(value);
-    strncpy(ht->table[index]->key, key, sizeof(newKV->key) - 1); // 避免溢出
-    strncpy(ht->table[index]->value, value, sizeof(newKV->value) - 1); // 避免溢出
+    // strncpy(ht->table[index]->key, key, sizeof(ht->table[index]->key) - 1); // 避免溢出
+    // strncpy(ht->table[index]->value, value, sizeof(ht->table[index]->value) - 1); // 避免溢出
     ht->size++;
     if((float)ht->size/ht->tablesize> LOAD_FACTOR)
-    resize(ht);
+        resize(ht);
     free(newKV);
 }
 
+void insert_LEFT(HashTable* ht, char* key,char* value)
+{
+    int index = MurmurHash3_x86_32(key,10,SEED)%(ht->tablesize); //KEY LENGTH=10
+    struct KeyValue *newKV = create_KV(key, value);
+    int initindex=index;
+
+     while (ht->table[index] != NULL) 
+     {
+        if (ht->table[index]->isDeleted) 
+        {
+            break;
+        }
+
+        if (strcmp(ht->table[index]->key, key) == 0) 
+        {
+            // Key already exists, update the value if needed
+            strncpy(ht->table[index]->value, value, sizeof(ht->table[index]->value) - 1);
+            return;
+        }else
+        {   
+            strncpy(ht->table[index]->key, key, sizeof(ht->table[index]->key) - 1); // 避免溢出
+            strncpy(ht->table[index]->value, value, sizeof(ht->table[index]->value) - 1); // 避免溢出
+
+            break;
+        }  
+        index = (index + 1) % (ht->tablesize);
+        if (index == initindex) 
+        {
+            printf("The table is full\n");
+            LEFT_KEY++; // Store non-stored keys
+            return;
+        }
+    }
+    
+    ht->size++;
+    if((float)ht->size/ht->tablesize> LOAD_FACTOR)
+        resize(ht);
+    free(newKV);
+}
 
 
 //get data from table
@@ -294,8 +327,9 @@ char* get(HashTable* ht, char* key)
 {
     int index = MurmurHash3_x86_32(key,10,SEED)%(ht->tablesize); //KEY LENGTH=10
     int initindex=index;
+    //struct KeyValue* kv=ht->table[index];
 
-    while (ht->table[index]->key != NULL)
+    while (ht->table[index]!= NULL)
     {
         //key found
         if (!ht->table[index]->isDeleted && strcmp(ht->table[index]->key, key) == 0)
@@ -303,7 +337,7 @@ char* get(HashTable* ht, char* key)
             return ht->table[index]->value;
         }
 
-        index = (index + 1) % ht->tablesize;
+        index = (index + 1) % (ht->tablesize);
 
         if (index == initindex)
         {
@@ -459,59 +493,70 @@ void freetable(struct HashTable* ht)
 //delete
 void deleteKV(HashTable *ht,char* key)
 {
+    int index=MurmurHash3_x86_32(key,LENGTH,SEED)%(ht->tablesize);
+    int initindex=index;
+    //struct KeyValue* kv=ht->table[index];
 
+    // if(kv!=NULL && strcmp(kv->key,key)==0)
+    // {
+    //     free(kv->value);
+    //     free(kv->key);
+    //     free(kv);
+    //     ht->table[index]=NULL;
+    //     kv->isDeleted=1;
+    //     ht->size--;
+    //     printf("deleted key_value with key %s from KVPairs", key);
+    //     return;
 
+    // }
+
+     do {
+        struct KeyValue* kv = ht->table[index];
+
+        if (kv != NULL && strcmp(kv->key, key) == 0 && kv->isDeleted == 0) 
+        {
+            kv->isDeleted = 1;
+            //free(kv->value);
+            //free(kv->key);
+            free(kv);
+            ht->table[index] = NULL;
+            
+            ht->size--;
+            //kv->isDeleted = 1;
+            printf("Deleted key_value with key %s from KVPairs \n", key);
+            return;
+        }
+
+        
+        index = (index + 1) % (ht->tablesize);
+
+    } while (index != initindex); 
+
+    printf("Key %s not found in KVPairs \n", key);
+    
+
+}
+
+void showTable(struct HashTable* ht)
+{
+    printf("\nHash Table\n--------------------------\n");
+
+    for (int i = 0; i < ht->tablesize; i++)
+    {
+        struct KeyValue* currKV = ht->table[i];
+        
+        if (currKV != NULL && (currKV->key[0]!='\0'))
+        {
+            printf("index: %d, key: %s, value: %s\n", i, currKV->key, currKV->value);
+        }
+
+        
+
+    }
+
+    printf("this Hash table is over \n");
+    printf("-------------\n");
 
 
 }
 
-
-
-/*
-int main() {
-    HashTable ht;
-    initHashTable(&ht);
-
-    clock_t start_time=clock();
-
-
-
-
-    insert(&ht, "one", 1);
-    insert(&ht, "two", 2);
-    insert(&ht, "four", 4);
-    insert(&ht, "three", 3);
-    insert(&ht, "five", 5);
-    insert(&ht, "six", 6);
-    insert(&ht, "seven", 7);
-    insert(&ht, "eight", 8);
-
-
-    clock_t end_time=clock();
-
-
-    double execution_time=(double)(end_time-start_time)/CLOCKS_PER_SEC;
-    //double execution_time=difftime;
-
-    printf("Execution time: %f seconds\n", execution_time);
-    printf("Value for 'one': %d\n", get(&ht, "one"));
-    printf("Value for 'two': %d\n", get(&ht, "two"));
-    printf("Value for 'four': %d\n", get(&ht, "four"));
-
-
-
-
-    
-    srand(time(NULL));
-    int length=rand()%(10-5+1)+5;  //length=5~10
-    for(int i=0;i<10^5;i++)
-    insert(&ht,generate_random_string(length),genRanVal());
-
-
-
-
-    
-    return 0;
-}
-
-*/
