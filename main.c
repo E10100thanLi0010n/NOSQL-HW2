@@ -57,7 +57,7 @@ int  main()
     // showTable(ht);
      printf("\n");
 
-    //RedisTest();
+    RedisTest();
     test(ht);
     //showTable(ht);
 
