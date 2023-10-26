@@ -25,49 +25,9 @@ char* generate_random_string(int length)
 }
 
 
-//check time  betewwn HW and Hiredis
-double measExecuTime(int (*function)())
-{
-    clock_t start,end;
-    double cpu_time;
-
-    start=clock();
-    function();
-    end=clock();
-
-    cpu_time=((double)(end-start))/CLOCKS_PER_SEC;
-    return cpu_time;
-}
-/*
-size_t measMemUse(int (*function)())
-{
-    size_t memUseBefore,memUseAfter;
-
-    FILE *statfile=fopen("/proc/self/statm", "r");
-    fscanf(statfile,"%s %lu",&memUseBefore);
-    fclose(statfile);
-
-    function();
-
-    FILE *statfile=fopen("/proc/self/statm", "r");
-    fscanf(statfile,"%s %lu",&memUseAfter);
-    fclose(statfile);
-    
-
-    return (memUseAfter-memUseBefore)*(size_t)getpagesize();
 
 
-}
-*/
-void analysisTable_regenData(struct HashTable *ht)
-{
-
-
-
-
-
-}
-
+//function 1 :redis
 void RedisTest(void)
 {
     //hiredis test
@@ -99,6 +59,9 @@ void RedisTest(void)
     //freeReplyObject(reply);
 
     //clock_t start,end;
+    printf("this is redis for 100000 data insert\n");
+    printf("------------------------------------\n");
+
     struct timeval start, end;
     gettimeofday(&start, NULL);
 
@@ -132,13 +95,20 @@ void RedisTest(void)
 
     redisFree(context);
 
+    printf("------------------------------------\n");
+    printf("this is the end of redis for 100000 data insert\n\n");
+    
 
 }
 
-void test(struct HashTable *ht)
+//funtion1 : my hash table 
+void test(void)
 {   
-    
-    int length=10;
+    struct HashTable *ht=initHashTable();
+    printf("this is my hash table for 100000 data insert\n");
+    printf("------------------------------------\n");
+
+    //int length=10,num_records=100000;
     struct timeval start, end;
     gettimeofday(&start, NULL);
     
@@ -152,8 +122,8 @@ void test(struct HashTable *ht)
 
     for(int i=0;i<100000;i++)
     {   
-        char* key=generate_random_string(length);
-        char* value=generate_random_string(length);
+        char* key=generate_random_string(LENGTH);
+        char* value=generate_random_string(LENGTH);
         //unsigned int main_hash_function(char* key)
         insert(ht,key,value);
         
@@ -169,8 +139,11 @@ void test(struct HashTable *ht)
     
     gettimeofday(&end, NULL);
 
-    double elapsed = (end.tv_sec - start.tv_sec) + (end.tv_usec - start.tv_usec) / 1000000.0;
+    double elapsed = (end.tv_sec - start.tv_sec) + (end.tv_usec - start.tv_usec) / 100000.0;
     printf("Insertion time: %.6f seconds\n", elapsed);
+
+    // double elapsed_time = (end.tv_sec - start.tv_sec) + (end.tv_usec - start.tv_usec) / 1000000.0;
+    // printf("Create operation for %d records took %f seconds\n", num_records, elapsed_time);
 
     struct rusage usage;
     if (getrusage(RUSAGE_SELF, &usage) == 0) 
@@ -183,7 +156,164 @@ void test(struct HashTable *ht)
     }
 
     freetable(ht);
-     close(fd);
+    close(fd);
+
+    printf("------------------------------------\n");
+    printf("this is the end of my hash table for 100000 data insert\n\n");
+
+
+
+}
+//funtion 2: Redis average_Create_Read
+void RedisTest_average_Create_Read(void)
+{
+    redisContext *context = redisConnect("localhost", 6379); // 连接到Redis服务器
+    if(context!=NULL && context->err)
+    {   
+        redisFree(context);
+        printf("connect redis server err:%s \n",context->errstr);
+        return;
+    }else
+    {
+        printf("connect redisserver success \n");
+    }
+
+    
+    char key[LENGTH];
+    char value[LENGTH];
+    struct timeval start, end;
+    double elapsed_time;
+
+    int num_records = 100000; 
+
+    
+    gettimeofday(&start, NULL);
+
+    printf("this is redis for average time for data create and read\n");
+    printf("------------------------------------\n");
+
+    for (int i = 0; i < num_records; i++) 
+    {
+        snprintf(key, sizeof(key), "key%d", i);
+        snprintf(value, sizeof(value), "value%d", i);
+        redisReply *reply = redisCommand(context, "SET %s %s", key, value);
+        freeReplyObject(reply);
+    }
+    gettimeofday(&end, NULL);
+    elapsed_time = (end.tv_sec - start.tv_sec) + (end.tv_usec - start.tv_usec) / 1000000.0;
+    printf("Create (SET) operation took %f seconds\n", elapsed_time);
+
+    // 测试随机读取（Read）操作
+    gettimeofday(&start, NULL);
+    for (int i = 0; i < num_records; i++) 
+    {
+        snprintf(key, sizeof(key), "key%d", rand() % num_records);
+        redisReply *reply = redisCommand(context, "GET %s", key);
+        freeReplyObject(reply);
+    }
+    gettimeofday(&end, NULL);
+    elapsed_time = (end.tv_sec - start.tv_sec) + (end.tv_usec - start.tv_usec) / 1000000.0;
+    printf("Random Read (GET) operation took %f seconds\n", elapsed_time);
+
+    redisFree(context); // 断开与Redis的连接
+
+    printf("------------------------------------\n");
+    printf("this is the end of redis for average time for data create and read\n");
+    
+
+
+}
+
+//function 2 : my hash table for average create delay
+void benchmark_create(void) 
+{
+    struct HashTable *ht=initHashTable();
+    int num_records=10000;
+
+    struct timeval start, end;
+    double elapsed_time;
+
+    printf("this is my hash table for average time for data random create \n");
+    printf("------------------------------------\n");
+
+    gettimeofday(&start, NULL);
+    for (int i = 0; i < num_records; i++) {
+        char key[15];
+        char value[15];
+        snprintf(key, sizeof(key), "key%d", i);
+        snprintf(value, sizeof(value), "value%d", i);
+        insert(ht, key, value);
+    }
+    gettimeofday(&end, NULL);
+    elapsed_time = (end.tv_sec - start.tv_sec) + (end.tv_usec - start.tv_usec) / 1000000.0;
+    printf("Create operation for %d records took %f seconds\n", num_records, elapsed_time);
+
+    printf("------------------------------------\n");
+    printf("this is the end of my hash table for average time for data random create\n");
+
+    freetable(ht);
+}
+
+//random read
+void benchmark_read(void) 
+{
+    srand(time(NULL));
+    struct HashTable *ht=initHashTable();
+    int num_records=100000;
+    //CREATE
+    struct timeval Cstart, Cend;
+    double Celapsed_time;
+    //READ
+    struct timeval Rstart, Rend;
+    double Relapsed_time;
+
+
+    printf("this is my hash table for average time for data random create \n");
+    printf("------------------------------------\n");
+
+    gettimeofday(&Cstart, NULL);
+    for (int i = 0; i < num_records; i++) {
+        // char key[LENGTH];
+        // char value[LENGTH];
+        // snprintf(key, sizeof(key), "key%d", i);
+        // snprintf(value, sizeof(value), "value%d", i);
+        char* key=generate_random_string(LENGTH);
+        char* value=generate_random_string(LENGTH);
+
+        insert(ht, key, value);
+    }
+    gettimeofday(&Cend, NULL);
+    Celapsed_time = (Cend.tv_sec - Cstart.tv_sec) + (Cend.tv_usec - Cstart.tv_usec) / 1000000.0;
+    printf("Create operation for %d records took %f seconds\n", num_records, Celapsed_time);
+
+    printf("------------------------------------\n");
+    printf("this is the end of my hash table for average time for data random create\n");
+/////
+    // printf("this is my hash table for average time for data random read \n");
+    // printf("------------------------------------\n");
+
+    // gettimeofday(&Rstart, NULL);
+    // for (int i = 0; i < num_records; i++) 
+    // {
+    //     //char key[LENGTH];
+    //     //snprintf(key, sizeof(key), "key%d", rand() % num_records);
+    //     int index=rand()%ht->tablesize;
+    //     char* value = get(ht, ht->table[index]->key);
+        
+    //     if (value != NULL) 
+    //     {
+    //         printf("Read: Key = %s, Value=%s\n", ht->table[index]->key, value);
+    //     }
+    // }
+    // gettimeofday(&Rend, NULL);
+    // Relapsed_time = (Rend.tv_sec - Rstart.tv_sec) + (Rend.tv_usec - Rstart.tv_usec) / 100000.0;
+    // printf("Random Read operation for %d records took %f seconds\n", num_records, Relapsed_time);
+
+    // printf("------------------------------------\n");
+    // printf("this is the end of my hash table for average time for random data read\n");
+
+    freetable(ht);
+
 }
 
 /*

@@ -22,7 +22,10 @@ size_t measMemUse(int (*function)());
 
 void RedisTest(void);
 //void test(struct DataBase*);
-void test(struct HashTable*);
+void test(void);
+void RedisTest_average_Create_Read(void);
+void benchmark_read(void) ;
+void benchmark_create(void);
 
 
 #endif
