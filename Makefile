@@ -3,8 +3,8 @@ CFLAGS	=	-Wall	-g
 
 
 TARGET	=	my_program
-SRC	=	main.c	table.c	DoubleLinkedList.c	benchmark.c
-HEADERS	=	table.h	DoubleLinkedList.h	benchmark.h
+SRC	=	main.c	table.c	DoubleLinkedList.c	benchmark.c	SortedSet.c
+HEADERS	=	table.h	DoubleLinkedList.h	benchmark.h	SortedSet.h
 
 all:	$(TARGET)
 
