@@ -6,31 +6,87 @@
 #include<string.h>
 #include<limits.h>
 
-struct SkipListNode
+//int ZSKIPLIST_MAXLEVEL;
+#define ZSKIPLIST_P 0.25
+#define SKIPLIST_MAXLEVEL 32
+
+typedef struct Zskiplistnode
 {
     double score;
     char *member;
-    struct SkipListNode **forward; 
+    //void *obj;
+    struct Zskiplistnode *backward; 
 
-};
+    struct Zskiplistlevel
+    {
+        struct Zskiplistnode *forward;
+        unsigned long span;
 
-struct SkipList
+    } level[];
+
+}Zskiplistnode;
+
+typedef struct Zskiplist
 {
-    struct SkipListNode *head;
+    struct Zskiplistnode *head,*tail;
     int level;
+    unsigned long length;
+}Zskiplist;
+
+
+struct Dict
+{
+    struct Entry
+    {
+        char *key;
+        void *value;
+
+    }*entries;
+
+    size_t size;
+    size_t capa;//capacity
+
+} ;
+
+
+
+
+
+struct ZSet
+{
+    struct Zskiplist *zsl;
+    //struct dict *dict; 
 
 };
 
-struct SkipListNode *createSkipListNode(double ,char *, int ); 
-struct SkipList *createSkipList();
+//function
+
+//skiplist =zsl
+
+struct Zskiplistnode* zslcreateNode(int  ,double ,char*  ); 
+struct Zskiplist *zslcreate();
 int randomLevel();
-void insertSkipList(struct SkipList *list,double score,char* member);
+struct Zskiplistnode* zslinsert(struct Zskiplist *list,double score,char* member);
 
-int getRank(struct SkipList*,char *);
-double getScore(struct SkipList*,char *);
-void freeSkipList(struct SkipList*);
+int zslgetRank(struct Zskiplist*,double,char *);
+double getScore(struct Zskiplist*,char *);
 
-void ZADD(struct SkipList*,double,char*);
-int ZCARD(struct SkipList*);
+int zslrandomlevel(void);
+
+
+
+void zslfreeNode(struct Zskiplistnode *);
+void zslfree(struct Zskiplist *);
+int zsldelete(struct Zskiplist *list,double score,char* member,struct Zskiplistnode**node);
+void zsldeleteNode(struct Zskiplist* ,struct Zskiplistnode *,struct Zskiplistnode** );
+
+void ZADD(struct Zskiplist*,double,char*);
+int ZCARD(struct Zskiplist*);
+
+//dict
+void DictInit(struct Dict *dict,size_t initcapa);
+
+
+
 
 #endif //SORTEDSET_H

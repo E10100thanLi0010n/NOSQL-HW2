@@ -1,5 +1,7 @@
 {
     "files.associations": {
-        "doublelinkedlist.h": "c"
+        "doublelinkedlist.h": "c",
+        "hash.h": "c",
+        "vector": "c"
     }
 }

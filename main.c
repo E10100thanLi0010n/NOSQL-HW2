@@ -2,25 +2,18 @@
 #include"benchmark.h"
 #include"DoubleLinkedList.h"
 #include"SortedSet.h"
-
+#include"Hash.h"
 int main()
 {
- 
+ //double linked list
 //    struct DouLL* myList = createDoubleLL();
-
-//     // 使用 lpush 在链表头部插入元素
 //     RPUSH(myList, "1a");
 //     RPUSH(myList, "2bb");
 //     RPUSH(myList, "3c");
 //     //RPUSH(myList, "4d");
 //     //RPUSH(myList, "5e");
-
-
-    // showList(myList);
+// showList(myList);
     // printf("len= %d\n",LLEN(myList));
-
-    
-    
     //char* popped1 = LPOP(myList);
     //printf("pop val is : %s\n",popped1);
     // showList(myList);
@@ -31,26 +24,57 @@ int main()
 
 
     
-    struct SkipList *list = createSkipList();
+    // struct Zskiplist *list = zslcreate();
 
-    // 插入元素
-    insertSkipList(list, 1.0, "member1");
-    insertSkipList(list, 2.0, "member2");
-    insertSkipList(list, 3.5, "member3");
+    // // 插入元素
+    // zslinsert(list, 1.0, "member1");
+    // zslinsert(list, 2.0, "member2");
+    // zslinsert(list, 3.5, "member3");
 
     //ZADD(list, 1.0, "member1");
    // ZADD(list, 2.0, "member2");
    // ZADD(list, 3.5, "member3");
 
     // 獲取排名和分數
-    printf("Rank of member1: %d\n", getRank(list, "member3"));
-    //printf("Score of member2: %f\n", getScore(list, "member2"));
+    // printf("Rank of member1: %d\n", zslgetRank(list, 1.0,"member1"));
 
-    printf("zcard : %d\n",ZCARD(list));
+    // printf("Score of member2: %f\n", zslgetScore(list, "member2"));
+
+    //printf("zcard : %d\n",ZCARD(list));
 
     // 釋放資源
-    freeSkipList(list);
+    //zslfree(list);
   
+    char* str1 = "wang";
+    char* str2 = "ma";
+    char* str102 = "tian";
+    //printf("create a table \n");
+    struct Hash* table = create_table("table 1");
+
+    printf("ok, now you can create kv in your hash table \n");
+
+    Hash_insert(table,"a" , str1);
+    Hash_insert(table,"a", str2);
+    //Hash_insert(table, 102, str102);
+
+
+    //show_Hash(table);
+    // printf("valuefor key :1 \n");
+
+     printf("value in key 1: %s \n", ValueforKey(table,"a"));
+
+     //printf("after delete 2 \n");
+     //delete_KV(table,"a");
+    // printf("\n");
+
+    // printf("update data for key: 102 \n");
+    // updateValue(table, 102);
+
+     //show_Hash(table);
+
+    free_Hash(table);
+
+   
 
     return 0;
 }
