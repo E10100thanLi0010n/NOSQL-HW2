@@ -7,14 +7,14 @@
 #include<limits.h>
 
 //int ZSKIPLIST_MAXLEVEL;
-#define ZSKIPLIST_P 0.25
+#define SKIPLIST_P 0.25
 #define SKIPLIST_MAXLEVEL 32
 
 typedef struct Zskiplistnode
 {
-    double score;
-    char *member;
-    //void *obj;
+    //double score;
+    //char *member;
+    void *obj;
     struct Zskiplistnode *backward; 
 
     struct Zskiplistlevel
@@ -28,9 +28,10 @@ typedef struct Zskiplistnode
 
 typedef struct Zskiplist
 {
-    struct Zskiplistnode *head,*tail;
+    Zskiplistnode *head,*tail;
     int level;
     unsigned long length;
+    int (*compare)(const void*,const void*);
 }Zskiplist;
 
 
@@ -40,17 +41,10 @@ struct Dict
     {
         char *key;
         void *value;
-
     }*entries;
-
     size_t size;
     size_t capa;//capacity
-
 } ;
-
-
-
-
 
 struct ZSet
 {
@@ -63,13 +57,15 @@ struct ZSet
 
 //skiplist =zsl
 
-struct Zskiplistnode* zslcreateNode(int  ,double ,char*  ); 
-struct Zskiplist *zslcreate();
+//struct Zskiplistnode* zslcreateNode(int  ,double ,char*  ); 
+Zskiplistnode* zslcreateNode(int  ,void*); 
+//Zskiplist *zslcreate();
+Zskiplist *zslcreate(int (*compare)(const void*,const void*));
 int randomLevel();
-struct Zskiplistnode* zslinsert(struct Zskiplist *list,double score,char* member);
-
-int zslgetRank(struct Zskiplist*,double,char *);
-double getScore(struct Zskiplist*,char *);
+//Zskiplistnode* zslinsert(Zskiplist *list,double score,char* member);
+Zskiplistnode* zslinsert(Zskiplist *,void*);
+int zslgetRank(Zskiplist*,double,char *);
+double getScore(Zskiplist*,char *);
 
 int zslrandomlevel(void);
 

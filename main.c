@@ -3,6 +3,12 @@
 #include"DoubleLinkedList.h"
 #include"SortedSet.h"
 #include"Hash.h"
+
+int compare(const void* a,const void *b)
+{
+    return  strcmp(a,b);
+}
+
 int main()
 {
  //double linked list
@@ -21,6 +27,17 @@ int main()
     // printf("\n\n");
     // LRANGE(myList,-100,100);
     // freeDLL(myList);
+
+
+    char* words[]={"foo","zap","karsa"};
+    Zskiplist *sl=zslcreate(compare);
+
+    for(int i=0;words[i]!=NULL;i++)
+    {
+        printf("insert %s: %p\n",words[i],zslinsert(sl,words[i]));
+
+    }
+
 
 
     
@@ -45,23 +62,23 @@ int main()
     // 釋放資源
     //zslfree(list);
   
-    char* str1 = "wang";
-    char* str2 = "ma";
-    char* str102 = "tian";
-    //printf("create a table \n");
-    struct Hash* table = create_table("table 1");
+    // char* str1 = "wang";
+    // char* str2 = "ma";
+    // char* str102 = "tian";
+    // //printf("create a table \n");
+    // struct Hash* table = create_table("table 1");
 
-    printf("ok, now you can create kv in your hash table \n");
+    // printf("ok, now you can create kv in your hash table \n");
 
-    Hash_insert(table,"a" , str1);
-    Hash_insert(table,"a", str2);
+    // Hash_insert(table,"a" , str1);
+    // Hash_insert(table,"a", str2);
     //Hash_insert(table, 102, str102);
 
 
     //show_Hash(table);
     // printf("valuefor key :1 \n");
 
-     printf("value in key 1: %s \n", ValueforKey(table,"a"));
+    // printf("value in key 1: %s \n", ValueforKey(table,"a"));
 
      //printf("after delete 2 \n");
      //delete_KV(table,"a");
@@ -72,7 +89,7 @@ int main()
 
      //show_Hash(table);
 
-    free_Hash(table);
+    //free_Hash(table);
 
    
 
