@@ -2,6 +2,7 @@
     "files.associations": {
         "doublelinkedlist.h": "c",
         "hash.h": "c",
-        "vector": "c"
+        "vector": "c",
+        "chrono": "c"
     }
 }

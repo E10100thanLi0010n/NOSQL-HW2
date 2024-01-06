@@ -8,7 +8,7 @@
 #include<stdbool.h>
 
 #include<stddef.h>
-
+#include<unistd.h>
 
 #define VALUE_MAX 100
 #define HASH_MAX 1000
@@ -21,22 +21,22 @@
 #define INDEX_LEN 10
 #define INITIAL_CAPACITY 10
 
-struct Key_Value
+typedef struct Key_Value
 {
     char key[LENGTH+1];
     char value[LENGTH+1];
     struct Key_Value* next;
 
-};
+}Key_Value;
 
-struct Hash
+typedef struct Hash
 {
     struct Key_Value** KVPairs;
     int count;
     char ListName[LISTNAME_MAX];
     int capacity;
     //struct  LinkedList** overflow_buckets;
-};
+}Hash;
 
 unsigned int HashFunction(char* key);
 // hash function
@@ -46,32 +46,32 @@ unsigned int HashFunction(char* key);
 // struct LinkedList* allocate_List();
 // struct LinkedList* insert_LinkedList(struct LinkedList* list, struct Key_Value* kv);
 
-struct Hash* create_table(char* );
+Hash* create_table(char* );
 
-struct Key_Value* create_HashKV(char* key, char* value);
+Key_Value* create_HashKV(char* key, char* value);
 
 // handling_cllision()
 //void handle_collision(struct Hash* hm, struct Key_Value* kv, unsigned int index);
 //insert
-void Hash_insert(struct Hash* hm,char* key, char* value);
+void Hash_insert(Hash* hm,char* key, char* value);
 
 //search
-struct Key_Value* search_KV(struct Hash* hm,char* key);
+Key_Value* search_KV(Hash* hm,char* key);
 //find the value of the key
-char* ValueforKey(struct Hash* hm,char* key);
+char* ValueforKey(Hash* hm,char* key);
 //update
-void updateHashValue(struct Hash* hm,char* key);
-void delete_KV(struct Hash* hm,char* key);
+void updateHashValue(Hash* hm,char* key);
+void delete_KV(Hash* hm,char* key);
 //void free_list(struct LinkedList* list);
 //void free_overbuck(struct Hash* hm);
-void free_KV(struct Key_Value* kv);
-void free_Hash(struct Hash* hm);
-void show_Hash(struct Hash* hm);
+void free_KV(Key_Value* kv);
+void free_Hash(Hash* hm);
+void show_Hash(Hash* hm);
 
-char* HGET(struct Hash* hm,char* key);
-void HSET(struct Hash* hm,char* key,char*);
-void HDEL(struct Hash* hm,char* key);
+char* HGET(Hash* hm,char* key);
+void HSET(Hash* hm,char* key,char*);
+void HDEL(Hash* hm,char* key);
 
-void EXPIRE(struct Hash* hm,char* key);
+void EXPIRE(Hash* ,char* ,int );
 
 #endif

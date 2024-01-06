@@ -12,9 +12,9 @@ unsigned int HashFunction(char* key) //
 }
 
 
-struct Key_Value* create_HashKV(char* key, char* value)
+Key_Value* create_HashKV(char* key, char* value)
 {
-    struct Key_Value* newkv = (struct Key_Value*)malloc(sizeof(struct Key_Value));
+    Key_Value* newkv = (Key_Value*)malloc(sizeof(Key_Value));
     if(newkv==NULL)
     {
         printf("allocated failed \n");
@@ -29,9 +29,9 @@ struct Key_Value* create_HashKV(char* key, char* value)
 }
 
 
-struct Hash* create_table(char* name)
+Hash* create_table(char* name)
 {
-    struct Hash* hm = (struct Hash*)malloc(sizeof(struct Hash));
+    Hash* hm = (Hash*)malloc(sizeof(Hash));
     if (hm == NULL)
     {
         printf("create_table: allocated failed\n");
@@ -110,10 +110,10 @@ struct Key_Value* Remove_From_Linkedlist(struct LinkedList* list)
 
 
 //insert
-void Hash_insert(struct Hash* hm,char* key, char* value)
+void Hash_insert(Hash* hm,char* key, char* value)
 {
     int index = HashFunction(key);
-    struct Key_Value* newKV=create_HashKV(key, value);
+    Key_Value* newKV=create_HashKV(key, value);
 
     if (hm->KVPairs[index] == NULL) //no KV in index
     {
@@ -121,27 +121,27 @@ void Hash_insert(struct Hash* hm,char* key, char* value)
     }
     else
     {
-        struct Key_Value* current = hm->KVPairs[index];
+        Key_Value* current = hm->KVPairs[index];
         while (current->next != NULL) 
         current = current->next;
 
         current->next = newKV;
     }
    
-    // if (hm->count > (hm->size / 2)) {
-    //     rehash(hm);
-    // }
-    // }
+    if (hm->count > (hm->count / 2)) {
+        rehash(hm);
+    }
+    
     hm->count++;
 }
 
 
 
 //search
-struct Key_Value* search_KV(struct Hash* hm,char* key)
+Key_Value* search_KV(Hash* hm,char* key)
 {
     int index = HashFunction(key);
-    struct Key_Value* current = hm->KVPairs[index];
+    Key_Value* current = hm->KVPairs[index];
 
 
     while(current!= NULL)
@@ -163,10 +163,10 @@ struct Key_Value* search_KV(struct Hash* hm,char* key)
 
 
 //find the value of the key
-char* ValueforKey(struct Hash* hm,char* key)
+char* ValueforKey(Hash* hm,char* key)
 {
     int index =HashFunction(key);
-    struct Key_Value* current=search_KV(hm, key);
+    Key_Value* current=search_KV(hm, key);
     if (current!= NULL) return current->value;
 
     /*
@@ -187,7 +187,7 @@ char* ValueforKey(struct Hash* hm,char* key)
 
 
 //update
-void updateHashValue(struct Hash* hm,char* key)
+void updateHashValue(Hash* hm,char* key)
 {
     if (hm == NULL)
     {
@@ -205,7 +205,7 @@ void updateHashValue(struct Hash* hm,char* key)
         return;
     }
 
-    struct Key_Value* current= search_KV(hm, key);
+    Key_Value* current= search_KV(hm, key);
 
     if (current!= NULL)
     {
@@ -275,10 +275,10 @@ void updateHashValue(struct Hash* hm,char* key)
 }
 
 
-void delete_KV(struct Hash* hm,char* key)
+void delete_KV(Hash* hm,char* key)
 {
     int index =HashFunction(key);
-    struct Key_Value* kv =search_KV(hm,key);
+    Key_Value* kv =search_KV(hm,key);
 
     /*
     struct Key_Value* currKV = search_KV(hm, key);
@@ -291,8 +291,6 @@ void delete_KV(struct Hash* hm,char* key)
         hm->count--;
         printf("deleted key_value with key %d from KVPairs", key);
         return;
-
-
     }
     */
 
@@ -301,19 +299,17 @@ void delete_KV(struct Hash* hm,char* key)
         free_KV(kv);
         hm->KVPairs[index] = NULL; //FIXME:what about the leftover of overflow_buckets[index]
         hm->count--;
-        printf("deleted key_value with key %s from KVPairs", key);
+        printf("deleted key_value with key  %s  from KVPairs \n", key);
         return;
     }
 
-
-    
 
     printf("Key %s not found in the hash table.\n", key);
 }
 
 
 //delete
-void free_KV(struct Key_Value* kv)
+void free_KV(Key_Value* kv)
 {
     // if (kv != NULL)
     // {
@@ -332,14 +328,14 @@ void free_KV(struct Key_Value* kv)
 }
 
 
-void free_Hash(struct Hash* hm)
+void free_Hash(Hash* hm)
 {
 
     if (hm == NULL) return;
 
     for (int i = 0; i < hm->capacity; i++)
     {
-        struct Key_Value* current= hm->KVPairs[i];
+        Key_Value* current= hm->KVPairs[i];
         // if (kv != NULL)
         // {
         //     free_KV(hm->KVPairs[i]);
@@ -352,9 +348,8 @@ void free_Hash(struct Hash* hm)
             tmp=current;
             current=current->next;
             free_KV(tmp);
-
         }
-        
+    
     }
 
     
@@ -368,7 +363,7 @@ void free_Hash(struct Hash* hm)
 
 
 
-void show_Hash(struct Hash* hm)
+void show_Hash(Hash* hm)
 {
     printf("\nHash Table\n--------------------------\n");
 
@@ -399,16 +394,14 @@ void show_Hash(struct Hash* hm)
     printf("-------------\n");
 }
 
-char* HGET(struct Hash* hm,char* key)
+char* HGET(Hash* hm,char* key)
 {
     ValueforKey(hm,key);
-
-
 
 }
 
 
-void HSET(struct Hash* hm,char* key,char* value)
+void HSET(Hash* hm,char* key,char* value)
 {
 
     int index = HashFunction(key);
@@ -436,7 +429,7 @@ void HSET(struct Hash* hm,char* key,char* value)
 }
 
 
-void HDEL(struct Hash* hm,char* key)
+void HDEL(Hash* hm,char* key)
 {
 
     delete_KV(hm,key);
@@ -444,9 +437,16 @@ void HDEL(struct Hash* hm,char* key)
 
 }
 
-void EXPIRE(struct Hash* hm,char* key)
+void EXPIRE(Hash* hm,char* key,int sec)
 {
+    //first find key pos
+    Key_Value* node=search_KV(hm,key);
 
+
+    //wait for sec seconds, then delete it.
+    sleep(sec);
+
+    HDEL(hm,key);
 
 
 

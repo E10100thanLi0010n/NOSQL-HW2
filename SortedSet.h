@@ -12,9 +12,9 @@
 
 typedef struct Zskiplistnode
 {
-    //double score;
-    //char *member;
-    void *obj;
+    double score;
+    char *member;
+    //void *obj;
     struct Zskiplistnode *backward; 
 
     struct Zskiplistlevel
@@ -31,7 +31,7 @@ typedef struct Zskiplist
     Zskiplistnode *head,*tail;
     int level;
     unsigned long length;
-    int (*compare)(const void*,const void*);
+    //int (*compare)(const void*,const void*);
 }Zskiplist;
 
 
@@ -57,13 +57,12 @@ struct ZSet
 
 //skiplist =zsl
 
-//struct Zskiplistnode* zslcreateNode(int  ,double ,char*  ); 
-Zskiplistnode* zslcreateNode(int  ,void*); 
-//Zskiplist *zslcreate();
-Zskiplist *zslcreate(int (*compare)(const void*,const void*));
-int randomLevel();
-//Zskiplistnode* zslinsert(Zskiplist *list,double score,char* member);
-Zskiplistnode* zslinsert(Zskiplist *,void*);
+struct Zskiplistnode* zslcreateNode(int  ,double ,char*  ); 
+//Zskiplistnode* zslcreateNode(int  ,void*); 
+Zskiplist *zslcreate();
+//Zskiplist *zslcreate(int (*compare)(const void*,const void*));
+Zskiplistnode* zslinsert(Zskiplist *list,double score,char* member);
+//Zskiplistnode* zslinsert(Zskiplist *,void*);
 int zslgetRank(Zskiplist*,double,char *);
 double getScore(Zskiplist*,char *);
 
@@ -73,16 +72,20 @@ int zslrandomlevel(void);
 
 void zslfreeNode(struct Zskiplistnode *);
 void zslfree(struct Zskiplist *);
-int zsldelete(struct Zskiplist *list,double score,char* member,struct Zskiplistnode**node);
+int zsldelete(struct Zskiplist *list,double score,char* member);
 void zsldeleteNode(struct Zskiplist* ,struct Zskiplistnode *,struct Zskiplistnode** );
 
+Zskiplistnode* zslFind(Zskiplist *,double ,char*);
+Zskiplistnode* skiplistPopHead(Zskiplist *);
+Zskiplistnode* zslPopTail(Zskiplist *);
+unsigned long skiplistLength(Zskiplist *);
+
+/* redis */
 void ZADD(struct Zskiplist*,double,char*);
 int ZCARD(struct Zskiplist*);
 
 //dict
 void DictInit(struct Dict *dict,size_t initcapa);
-
-
 
 
 #endif //SORTEDSET_H

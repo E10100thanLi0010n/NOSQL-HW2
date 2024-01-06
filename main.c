@@ -28,68 +28,90 @@ int main()
     // LRANGE(myList,-100,100);
     // freeDLL(myList);
 
+/*for void* obj */
+    // char* words[]={"foo","zap","karsa"};
+    // Zskiplist *sl=zslcreate(compare);
 
-    char* words[]={"foo","zap","karsa"};
-    Zskiplist *sl=zslcreate(compare);
+    // for(int i=0;words[i]!=NULL;i++)
+    // {
+    //     printf("insert %s: %p\n",words[i],zslinsert(sl,words[i]));
 
-    for(int i=0;words[i]!=NULL;i++)
-    {
-        printf("insert %s: %p\n",words[i],zslinsert(sl,words[i]));
-
-    }
+    // }
 
 
 
     
-    // struct Zskiplist *list = zslcreate();
+    //struct Zskiplist *list = zslcreate();
 
-    // // 插入元素
-    // zslinsert(list, 1.0, "member1");
-    // zslinsert(list, 2.0, "member2");
+    // 插入元素
+    //zslinsert(list, 1.0, "member1");
+    //printf("%s \n",list->head->member);
+
+    //zslinsert(list, 2.0, "member2");
     // zslinsert(list, 3.5, "member3");
 
-    //ZADD(list, 1.0, "member1");
-   // ZADD(list, 2.0, "member2");
-   // ZADD(list, 3.5, "member3");
-
-    // 獲取排名和分數
-    // printf("Rank of member1: %d\n", zslgetRank(list, 1.0,"member1"));
+    // ZADD(list, 1.0, "member1");
+    // ZADD(list, 2.0, "member2");
+    // ZADD(list, 3.5, "member3");
+    
+     //printf("Rank of member1: %d\n", zslgetRank(list, 1.0,"member1"));
 
     // printf("Score of member2: %f\n", zslgetScore(list, "member2"));
 
-    //printf("zcard : %d\n",ZCARD(list));
+    // printf("zcard : %d\n",ZCARD(list));
+     
+    // printf("%d \n",skiplistLength(list));
+    // double searchScore = 3.5;
+    // char *searchMember = "member3";
+    // if(zsldelete(list,1.0,"member1"))
+    // {
+    //     printf("%d \n",skiplistLength(list));
+    // }
 
-    // 釋放資源
+
+    // Zskiplistnode *foundNode = zslFind(list, searchScore, searchMember);
+
+    // if (foundNode) 
+    // {
+    //     printf("Node found: Score=%.2f, Member=%s\n", foundNode->score, foundNode->member);
+    // } else {
+    //     printf("Node not found.\n");
+    // }
+
+
+    //釋放資源
     //zslfree(list);
   
-    // char* str1 = "wang";
-    // char* str2 = "ma";
-    // char* str102 = "tian";
-    // //printf("create a table \n");
-    // struct Hash* table = create_table("table 1");
+    char* str1 = "wang";
+    char* str2 = "ma";
+    char* str102 = "tian";
+    //printf("create a table \n");
+    struct Hash* table = create_table("table 1");
 
-    // printf("ok, now you can create kv in your hash table \n");
+    printf("ok, now you can create kv in your hash table \n");
 
-    // Hash_insert(table,"a" , str1);
-    // Hash_insert(table,"a", str2);
-    //Hash_insert(table, 102, str102);
+    HSET(table,"a" , str1);
+    //HSET(table,"b", str2);
+    //Hash_insert(table,"102", str102);
 
 
     //show_Hash(table);
-    // printf("valuefor key :1 \n");
+   // printf("value for key :1 \n");
 
-    // printf("value in key 1: %s \n", ValueforKey(table,"a"));
+    printf("value in key 1: %s \n", HGET(table,"a"));
 
-     //printf("after delete 2 \n");
-     //delete_KV(table,"a");
-    // printf("\n");
+    printf("after delete 2 \n");
+    //delete_KV(table,"a");
+    //HDEL(table,"b");
+    EXPIRE(table,"a",3);
+    printf("\n");
 
-    // printf("update data for key: 102 \n");
-    // updateValue(table, 102);
+   //printf("update data for key: 102 \n");
+    //updateValue(table," 102");
 
-     //show_Hash(table);
+    show_Hash(table);
 
-    //free_Hash(table);
+    free_Hash(table);
 
    
 
