@@ -52,6 +52,7 @@ Key_Value* create_HashKV(char* key, char* value);
 
 // handling_cllision()
 //void handle_collision(struct Hash* hm, struct Key_Value* kv, unsigned int index);
+void rehash(Hash* hm);
 //insert
 void Hash_insert(Hash* hm,char* key, char* value);
 

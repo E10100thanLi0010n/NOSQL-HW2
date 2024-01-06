@@ -107,7 +107,31 @@ struct Key_Value* Remove_From_Linkedlist(struct LinkedList* list)
 
 // }
 
+void rehash(Hash* hm) 
+{
+    int oldSize = hm->capacity;
+    Key_Value** oldKVPairs = hm->KVPairs;
 
+    // Double the size of the hash table
+    hm->capacity *= 2;
+    hm->count = 0;  // Reset count to 0 after rehashing
+    hm->KVPairs = (Key_Value**)calloc(hm->capacity, sizeof(Key_Value*));
+
+    // Re-insert the existing key-value pairs into the new hash table
+    for (int i = 0; i < oldSize; i++) 
+    {
+        Key_Value* current = oldKVPairs[i];
+        while (current != NULL) 
+        {
+            Hash_insert(hm, current->key, current->value);
+            Key_Value* temp = current;
+            current = current->next;
+            free(temp);  // Free the memory of the old node
+        }
+    }
+
+    free(oldKVPairs);  // Free the old array of key-value pairs
+}
 
 //insert
 void Hash_insert(Hash* hm,char* key, char* value)
@@ -128,11 +152,12 @@ void Hash_insert(Hash* hm,char* key, char* value)
         current->next = newKV;
     }
    
-    if (hm->count > (hm->count / 2)) {
-        rehash(hm);
-    }
-    
     hm->count++;
+
+    if ((double)((double)hm->count/hm->capacity)/5 > LOAD_FACTOR) 
+        rehash(hm);
+    
+    
 }
 
 
