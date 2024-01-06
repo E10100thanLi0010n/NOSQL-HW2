@@ -35,6 +35,21 @@ typedef struct Zskiplist
 }Zskiplist;
 
 
+typedef struct {
+    char* member;
+    double score;
+} ZSetElement;
+
+
+typedef struct {
+    ZSetElement* elements;
+    int size;
+} ZSet;
+
+
+
+
+
 struct Dict
 {
     struct Entry
@@ -46,12 +61,12 @@ struct Dict
     size_t capa;//capacity
 } ;
 
-struct ZSet
-{
-    struct Zskiplist *zsl;
-    //struct dict *dict; 
+// struct ZSet
+// {
+//     struct Zskiplist *zsl;
+//     //struct dict *dict; 
 
-};
+// };
 
 //function
 
@@ -81,11 +96,26 @@ Zskiplistnode* zslPopTail(Zskiplist *);
 unsigned long skiplistLength(Zskiplist *);
 
 /* redis */
-void ZADD(struct Zskiplist*,double,char*);
-int ZCARD(struct Zskiplist*);
+//void ZADD(struct Zskiplist*,double,char*);
+//int ZCARD(struct Zskiplist*);
 
 //dict
-void DictInit(struct Dict *dict,size_t initcapa);
+//void DictInit(struct Dict *dict,size_t initcapa);
+void initZSet(ZSet* );
+void ZADD(ZSet* ,char* ,double );
+int ZCARD(ZSet* );
+void Zrange(ZSet* ,int ,int );
+void freeZSet(ZSet* );
+int ZCOUNT(ZSet* , double , double );
+void ZINTERSTORE(ZSet* , ZSet* , ZSet* );
+void ZUNIONSTORE(ZSet* , ZSet* , ZSet* );
+
+void ZRANGEBYSCORE(ZSet* , double , double );
+int ZRANK(ZSet* ,char* );
+void ZREM(ZSet* ,char* );
+void ZREMRANGEBYSCORE(ZSet* , double , double );
+
+
 
 
 #endif //SORTEDSET_H

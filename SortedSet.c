@@ -536,3 +536,174 @@ unsigned long skiplistLength(Zskiplist *list)
 
 
 // }
+
+
+void initZSet(ZSet* zset) 
+{
+    zset->elements = NULL;
+    zset->size = 0;
+}
+
+
+void ZADD(ZSet* zset,char* member,double score) 
+{
+    zset->elements = realloc(zset->elements, (zset->size + 1) * sizeof(ZSetElement));
+    
+    zset->elements[zset->size].member = strdup(member);
+    zset->elements[zset->size].score = score;
+
+    zset->size++;
+}
+
+int ZCARD(ZSet* zset)
+{
+
+    return zset->size;
+
+}
+
+// 根据分数范围获取元素
+void Zrange(ZSet* zset,int start,int stop) 
+{
+    if (start < 0 || stop >= zset->size || start > stop) {
+        printf("Invalid range\n");
+        return;
+    }
+
+    for (int i = start; i <= stop; i++) {
+        printf("Member: %s, Score: %0.2f\n", zset->elements[i].member, zset->elements[i].score);
+    }
+}
+
+// 释放有序集合的内存
+void freeZSet(ZSet* zset) 
+{
+    for (int i = 0; i < zset->size; i++) 
+    {
+        free(zset->elements[i].member);
+    }
+
+    free(zset->elements);
+}
+
+int ZCOUNT(ZSet* zset, double min, double max) 
+{
+    int count = 0;
+
+    for (int i = 0; i < zset->size; i++) 
+    {
+        if (zset->elements[i].score >= min && zset->elements[i].score <= max) 
+            count++;
+    }
+    return count;
+}
+
+// 
+void ZINTERSTORE(ZSet* result, ZSet* zset1, ZSet* zset2) 
+{
+    // 这里简化处理，假设两个有序集合的成员都是相同的
+    for (int i = 0; i < zset1->size; i++) 
+    {
+        for (int j = 0; j < zset2->size; j++) 
+        {
+            if (strcmp(zset1->elements[i].member, zset2->elements[j].member) == 0) 
+            {
+                ZADD(result, zset1->elements[i].member, zset1->elements[i].score + zset2->elements[j].score);
+                break;
+            }
+        }
+    }
+}
+
+// 
+void ZUNIONSTORE(ZSet* result, ZSet* zset1, ZSet* zset2) 
+{
+    // 将zset1中的元素加入结果集
+    for (int i = 0; i < zset1->size; i++) 
+    {
+        ZADD(result, zset1->elements[i].member, zset1->elements[i].score);
+    }
+
+    //
+    for (int i = 0; i < zset2->size; i++)
+     {
+        int found = 0;
+        for (int j = 0; j < result->size; j++) 
+        {
+            if (strcmp(zset2->elements[i].member, result->elements[j].member) == 0) 
+            {
+                result->elements[j].score += zset2->elements[i].score;
+                found = 1;
+                break;
+            }
+        }
+        if (!found) 
+        {
+            ZADD(result, zset2->elements[i].member, zset2->elements[i].score);
+        }
+    }
+}
+
+// 
+void ZRANGEBYSCORE(ZSet* zset, double min, double max)
+{
+    for (int i = 0; i < zset->size; i++) {
+        if (zset->elements[i].score >= min && zset->elements[i].score <= max) {
+            printf("Member: %s, Score: %f\n", zset->elements[i].member, zset->elements[i].score);
+        }
+    }
+}
+
+// 获取成员的排名
+int ZRANK(ZSet* zset,char* member) 
+{
+    for (int i = 0; i < zset->size; i++) 
+    {
+        if (strcmp(zset->elements[i].member, member) == 0) 
+        {
+            return i;
+        }
+    }
+    return -1;  // 未找到
+}
+
+// delete members
+void ZREM(ZSet* zset,char* member) 
+{
+    for (int i = 0; i < zset->size; i++) 
+    {
+        if (strcmp(zset->elements[i].member, member) == 0) 
+        {
+            free(zset->elements[i].member);
+            // 移除元素后，将数组中的元素前移
+            for (int j = i; j < zset->size - 1; j++) 
+            {
+                zset->elements[j] = zset->elements[j + 1];
+            }
+            zset->size--;
+            zset->elements = realloc(zset->elements, zset->size * sizeof(ZSetElement));
+            break;
+        }
+    }
+}
+
+// 根据分数范围移除元素
+void ZREMRANGEBYSCORE(ZSet* zset, double min, double max) 
+{
+    for (int i = 0; i < zset->size; i++) 
+    {
+        if (zset->elements[i].score >= min && zset->elements[i].score <= max) {
+            free(zset->elements[i].member);
+            // 移除元素后，将数组中的元素前移
+            for (int j = i; j < zset->size - 1; j++)
+            {
+                zset->elements[j] = zset->elements[j + 1];
+            }
+            zset->size--;
+            zset->elements = realloc(zset->elements, zset->size * sizeof(ZSetElement));
+            i--;  // 调整索引，因为元素被移除了
+        }
+    }
+}
+
+

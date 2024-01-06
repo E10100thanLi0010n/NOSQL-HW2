@@ -113,7 +113,48 @@ int main()
 
     // free_Hash(table);
 
-   
+    ZSet myZSet1, myZSet2, resultZSet;
+    initZSet(&myZSet1);
+    initZSet(&myZSet2);
+    initZSet(&resultZSet);
+
+    ZADD(&myZSet1, "member1", 10);
+    ZADD(&myZSet1, "member2", 5);
+    ZADD(&myZSet1, "member3", 20);
+
+    ZADD(&myZSet2, "member1", 15);
+    ZADD(&myZSet2, "member2", 8);
+    ZADD(&myZSet2, "member4", 12);
+
+    printf("ZRange 1:\n");
+    Zrange(&myZSet1, 0, myZSet1.size - 1);
+
+    printf("ZRange 2:\n");
+    Zrange(&myZSet2, 0, myZSet2.size - 1);
+
+    printf("ZINTERSTORE Result:\n");
+    ZINTERSTORE(&resultZSet, &myZSet1, &myZSet2);
+    Zrange(&resultZSet, 0, resultZSet.size - 1);
+
+    printf("ZUNIONSTORE Result:\n");
+    ZUNIONSTORE(&resultZSet, &myZSet1, &myZSet2);
+    Zrange(&resultZSet, 0, resultZSet.size - 1);
+
+    printf("ZCount: %d\n", ZCOUNT(&myZSet1, 5, 15));
+
+    printf("ZRANGEBYSCORE:\n");
+    ZRANGEBYSCORE(&myZSet1, 5, 15);
+
+    printf("ZRANK: %d\n", ZRANK(&myZSet1, "member2"));
+
+    printf("ZREMRANGEBYSCORE Result:\n");
+    ZREMRANGEBYSCORE(&myZSet1, 5, 15);
+    Zrange(&myZSet1, 0, myZSet1.size - 1);
+
+    // 释放内存
+    freeZSet(&myZSet1);
+    freeZSet(&myZSet2);
+    freeZSet(&resultZSet);
 
     return 0;
 }
