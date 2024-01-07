@@ -562,15 +562,55 @@ int ZCARD(ZSet* zset)
 
 }
 
-// 根据分数范围获取元素
+// from range to get zelements
 void Zrange(ZSet* zset,int start,int stop) 
 {
-    if (start < 0 || stop >= zset->size || start > stop) {
+    //out of range
+    if((start>=zset->size) &&(stop>zset->size))
+    {
+        printf("(empty list or set)\n");
+        return;
+    }
+    while(start<0)
+    {
+        start=start+zset->size;
+    }
+
+    while(stop<0)
+    {
+        stop=stop+zset->size;
+    }
+
+    while(start>=zset->size)
+    {
+        start-=zset->size;
+    }
+
+    
+
+    while(stop>=zset->size)
+    {
+        stop-=zset->size;
+    }
+    
+
+    if (start < 0 || start >=zset->size || stop < 0 || stop >=zset->size) 
+    {
         printf("Invalid range\n");
         return;
     }
 
-    for (int i = start; i <= stop; i++) {
+    if(start>stop)
+    {
+        int temp=start;
+        start=stop;
+        stop=temp;
+    }
+    printf("start: %d\n",start);
+    printf("stop: %d\n",stop);
+
+    for (int i = start; i <= stop; i++) 
+    {
         printf("Member: %s, Score: %0.2f\n", zset->elements[i].member, zset->elements[i].score);
     }
 }
@@ -601,7 +641,6 @@ int ZCOUNT(ZSet* zset, double min, double max)
 // 
 void ZINTERSTORE(ZSet* result, ZSet* zset1, ZSet* zset2) 
 {
-    // 这里简化处理，假设两个有序集合的成员都是相同的
     for (int i = 0; i < zset1->size; i++) 
     {
         for (int j = 0; j < zset2->size; j++) 
@@ -618,13 +657,11 @@ void ZINTERSTORE(ZSet* result, ZSet* zset1, ZSet* zset2)
 // 
 void ZUNIONSTORE(ZSet* result, ZSet* zset1, ZSet* zset2) 
 {
-    // 将zset1中的元素加入结果集
     for (int i = 0; i < zset1->size; i++) 
     {
         ZADD(result, zset1->elements[i].member, zset1->elements[i].score);
     }
 
-    //
     for (int i = 0; i < zset2->size; i++)
      {
         int found = 0;
@@ -654,7 +691,6 @@ void ZRANGEBYSCORE(ZSet* zset, double min, double max)
     }
 }
 
-// 获取成员的排名
 int ZRANK(ZSet* zset,char* member) 
 {
     for (int i = 0; i < zset->size; i++) 
@@ -664,7 +700,7 @@ int ZRANK(ZSet* zset,char* member)
             return i;
         }
     }
-    return -1;  // 未找到
+    return -1;  // not found
 }
 
 // delete members
@@ -675,7 +711,7 @@ void ZREM(ZSet* zset,char* member)
         if (strcmp(zset->elements[i].member, member) == 0) 
         {
             free(zset->elements[i].member);
-            // 移除元素后，将数组中的元素前移
+            
             for (int j = i; j < zset->size - 1; j++) 
             {
                 zset->elements[j] = zset->elements[j + 1];
@@ -687,21 +723,21 @@ void ZREM(ZSet* zset,char* member)
     }
 }
 
-// 根据分数范围移除元素
+// 
 void ZREMRANGEBYSCORE(ZSet* zset, double min, double max) 
 {
     for (int i = 0; i < zset->size; i++) 
     {
         if (zset->elements[i].score >= min && zset->elements[i].score <= max) {
             free(zset->elements[i].member);
-            // 移除元素后，将数组中的元素前移
+            
             for (int j = i; j < zset->size - 1; j++)
             {
                 zset->elements[j] = zset->elements[j + 1];
             }
             zset->size--;
             zset->elements = realloc(zset->elements, zset->size * sizeof(ZSetElement));
-            i--;  // 调整索引，因为元素被移除了
+            i--;  
         }
     }
 }

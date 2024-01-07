@@ -47,19 +47,16 @@ typedef struct {
 } ZSet;
 
 
-
-
-
-struct Dict
-{
-    struct Entry
-    {
-        char *key;
-        void *value;
-    }*entries;
-    size_t size;
-    size_t capa;//capacity
-} ;
+// struct Dict
+// {
+//     struct Entry
+//     {
+//         char *key;
+//         void *value;
+//     }*entries;
+//     size_t size;
+//     size_t capa;//capacity
+// } ;
 
 // struct ZSet
 // {

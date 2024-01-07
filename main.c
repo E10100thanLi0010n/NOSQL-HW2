@@ -112,48 +112,48 @@ int main()
     // show_Hash(table);
 
     // free_Hash(table);
-
-    ZSet myZSet1, myZSet2, resultZSet;
-    initZSet(&myZSet1);
-    initZSet(&myZSet2);
+/*  ZSET*/
+    ZSet ZSet1, ZSet2, resultZSet;
+    initZSet(&ZSet1);
+    initZSet(&ZSet2);
     initZSet(&resultZSet);
+    //ZADD
+    ZADD(&ZSet1, "member1", 10.5);
+    ZADD(&ZSet1, "member2", 5);
+    ZADD(&ZSet1, "member3", 20);
 
-    ZADD(&myZSet1, "member1", 10);
-    ZADD(&myZSet1, "member2", 5);
-    ZADD(&myZSet1, "member3", 20);
-
-    ZADD(&myZSet2, "member1", 15);
-    ZADD(&myZSet2, "member2", 8);
-    ZADD(&myZSet2, "member4", 12);
-
+    ZADD(&ZSet2, "member1", 15);
+    ZADD(&ZSet2, "member2", 8);
+    ZADD(&ZSet2, "member4", 12);
+    //Zrange
     printf("ZRange 1:\n");
-    Zrange(&myZSet1, 0, myZSet1.size - 1);
+    Zrange(&ZSet1, -1, 0);
 
     printf("ZRange 2:\n");
-    Zrange(&myZSet2, 0, myZSet2.size - 1);
-
+    Zrange(&ZSet2, 0, ZSet2.size - 1);
+    //ZINTERSTORE
     printf("ZINTERSTORE Result:\n");
-    ZINTERSTORE(&resultZSet, &myZSet1, &myZSet2);
+    ZINTERSTORE(&resultZSet, &ZSet1, &ZSet2);
     Zrange(&resultZSet, 0, resultZSet.size - 1);
-
+    //ZUNIONSTORE
     printf("ZUNIONSTORE Result:\n");
-    ZUNIONSTORE(&resultZSet, &myZSet1, &myZSet2);
+    ZUNIONSTORE(&resultZSet, &ZSet1, &ZSet2);
     Zrange(&resultZSet, 0, resultZSet.size - 1);
-
-    printf("ZCount: %d\n", ZCOUNT(&myZSet1, 5, 15));
-
+    //ZCOUNT
+    printf("ZCount: %d\n", ZCOUNT(&ZSet1, 5, 15));
+    //ZRANGEBYSCORE
     printf("ZRANGEBYSCORE:\n");
-    ZRANGEBYSCORE(&myZSet1, 5, 15);
-
-    printf("ZRANK: %d\n", ZRANK(&myZSet1, "member2"));
-
+    ZRANGEBYSCORE(&ZSet1, 5, 15);
+    //ZRANK
+    printf("ZRANK: %d\n", ZRANK(&ZSet1, "member2"));
+    
+    //ZREMRANGEBYSCORE
     printf("ZREMRANGEBYSCORE Result:\n");
-    ZREMRANGEBYSCORE(&myZSet1, 5, 15);
-    Zrange(&myZSet1, 0, myZSet1.size - 1);
+    ZREMRANGEBYSCORE(&ZSet1, 5, 15);
+    Zrange(&ZSet1, 0, ZSet1.size - 1);
 
-    // 释放内存
-    freeZSet(&myZSet1);
-    freeZSet(&myZSet2);
+    freeZSet(&ZSet1);
+    freeZSet(&ZSet2);
     freeZSet(&resultZSet);
 
     return 0;
