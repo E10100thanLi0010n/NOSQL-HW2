@@ -1,4 +1,4 @@
-## NOSQL HW2
+## NOSQL HW6
 
-# hash table with open addressing
+# hash table 
 
