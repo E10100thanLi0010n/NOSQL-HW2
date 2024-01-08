@@ -1,0 +1,23 @@
+資結作業6
+系級: 電機3b 學號: 110501558 姓名: 林意盛
+
+1.	題目定義
+問題描述：延續先前作業的程式，增加支援類 Redis  Hash 的操作，指令包含 HSET，HGET，HDEL，EXPIRE。指令功能參考下方連結: https://www.runoob.com/redis/redis-hashes.html
+功能: 1) 利用 chaining 解決 hash collision 問題。
+      2) 每次操作時計算 load factor，設計閥值，放大與縮小hash table size。
+程式作業解說
+依照 redis中文網站說明，我認為配合到這次作業的設計有些問題，首先是redis HSET，若是依照 redis的原本定義，會是當key相同時，value會update，我這部份有做出，但是會和separate chaining的設計有些奇怪，應該是要在後面加另一個chaining。另外，功能是separate chaining，但是卻又要計算load factor和rehashing，通常設計一種hash table，不是separate chaining，就是open addressing(load factor and rehashing)，但我很少看到有人會兼併使用。
+不過我還是假設當hash table的元素總量/5 > load factor(=0.8)時，會rehash，我希望能每個 key都大約放5個elements
+函式介紹
+放在Hash.h Hash.c中
+•	HSET
+Insert key-value 進去一個已經create的hash table，若有相同key，則會update key-value
+•	HGET
+取得key的value
+•	HDEL
+刪除table中的某個key-value
+•	EXPIRE
+給予key-value 存在的時間，時間一到，自動刪除該key-value
+
+
+

@@ -81,37 +81,36 @@ int main()
 
     //釋放資源
     //zslfree(list);
-  
-    // char* str1 = "wang";
-    // char* str2 = "ma";
-    // char* str102 = "tian";
-    // //printf("create a table \n");
-    // struct Hash* table = create_table("table 1");
+/*HASH */
+    char* str1 = "wang";
+    char* str2 = "ma";
+    char* str102 = "tian";
+    
+    struct Hash* table = create_table("table 1");
 
-    // printf("ok, now you can create kv in your hash table \n");
+    printf("ok, now you can create kv in your hash table \n");
 
-    // HSET(table,"a" , str1);
-    //HSET(table,"b", str2);
-    //Hash_insert(table,"102", str102);
+    HSET(table,"a" , str1);
+    HSET(table,"b", str2);
+    Hash_insert(table,"102", str102);
 
 
-    //show_Hash(table);
-   // printf("value for key :1 \n");
+    show_Hash(table);
+    printf("value for key :1 \n");
+    printf("value in key 1: %s \n", HGET(table,"a"));
 
-    // printf("value in key 1: %s \n", HGET(table,"a"));
+    printf("after delete 2 \n");
+    //delete_KV(table,"a");
+    //HDEL(table,"b");
+    EXPIRE(table,"a",3);
+    printf("\n");
 
-    // printf("after delete 2 \n");
-    // //delete_KV(table,"a");
-    // //HDEL(table,"b");
-    // EXPIRE(table,"a",3);
-    // printf("\n");
+    printf("update data for key: 102 \n");
+    updateValue(table," 102");
 
-   //printf("update data for key: 102 \n");
-    //updateValue(table," 102");
+    show_Hash(table);
 
-    // show_Hash(table);
-
-    // free_Hash(table);
+    free_Hash(table);
 /*  ZSET*/
     ZSet ZSet1, ZSet2, resultZSet;
     initZSet(&ZSet1);

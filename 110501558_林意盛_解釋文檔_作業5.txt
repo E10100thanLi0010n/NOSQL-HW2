@@ -1,0 +1,36 @@
+資結作業5
+系級: 電機3b 學號: 110501558 姓名: 林意盛
+
+1.	題目定義
+問題描述：延續先前作業的程式，增加支援類 Redis  Sorted Set 的操作，指令包含 ZADD，ZCARD，ZCOUNT，ZINTERSTORE，ZUNIONSTORE，ZRANGE，ZRANGEBYSCORE，ZRANK，ZREM，ZREMRANGEBYSCORE。
+程式作業解說
+這次我sorted set 是一開始使用skiplist，但我發現這很難在記憶體配置方面做好，所以我改成dictionary的方式組件，redis的zset是由zskiplist和dict組成，我簡化之。
+(deprecated):Skiplistnode是由double score和char* member組成。
+ZSetElement : zset元素，由char* member和 double score組成
+Zset : dict,由elements 和size組成
+
+函式介紹
+
+在SortedSet.h 和SortedSet.c中
+•	ZADD
+加入skiplistnode進入zskiplist
+•	ZCARD
+獲得set裡的元素數量
+•	ZCOUNT
+計算指定分數區間的成員數量
+•	ZINTERSTORE
+獲得zset1 和zset2的交集
+•	ZUNIONSTORE
+生成zset1和zset2的聯集
+•	ZRANGE
+返回sorted set中，指定區間的elements
+•	ZRANGEBYSCORE
+Zrange的限定範圍版本
+•	ZRANK
+返回指定member的key
+•	ZREM
+刪除set裡的element
+
+•	ZREMRANGEBYSCORE
+ZREM，只是增加範圍限制
+
