@@ -1,0 +1,59 @@
+﻿資結作業3
+系級: 電機3b 學號: 110501558 姓名: 林意盛
+  題目定義
+問題描述：第一個作業已完成類 Redis String 類型的 SET 與 GET 指令操作鍵值對 key-value pair。延續第一個作業的程式，增加支援類 Redis  List 的操作，指令包含 LPUSH，LPOP，RPUSH，RPOP，LLEN，LRANGE。
+資料模型設計：定義 NoSQL 資料庫的資料模型，例如鍵值對，以及每個鍵值對的資料結構 。
+使用指位器與動態記憶體配置來創建和管理這些資料結構。
+數據存儲：實現資料的存儲機制，使用 雙向鏈結串列 (Doubly Linked List)達成。
+記憶體管理：確保你的資料庫引擎有效地分配和釋放記憶體，以避免記憶體洩漏 (mem leak) 。
+程式作業解說
+這次增加了doublelinkedlist.h和doublelinkedlist.c
+函式介紹
+initHashTable()
+創建一個hash table，預設為5000
+·create_KV()
+創造一個KeyValue的object
+·resize()
+當LOAD_FACTOR>0.8時，調整該table的容量大小
+·insert()
+用於將KeyValue加入hash table
+·get()
+查詢已存在該表中的元素中的值(value)
+·updateValue()
+輸入想要改變的key值，改變該key的value
+·deleteKV()
+刪除目標Key_Value元素
+·freetable()
+釋放整個hash table
+·freeKV()
+釋放KeyValue
+·show_Hash( )
+顯示目前該表所有元素
+·RedisTest()
+功能一:給十萬筆資料，測redis所花的時間和空間
+·Test()
+功能一:給十萬筆資料，測我做的hash table所花的時間和空間
+·RedisTest_average_Create_Read()
+功能二:給十萬筆資料，測redis的平均讀取和新增延遲
+·benchmark_create()
+功能二:給十萬筆資料，測我做的hash table的平均新增延遲
+·benchmark_read()
+功能二:給十萬筆資料，測我做的hash table的平均讀取和新增延遲，因為我read每筆資料都會有結果，這樣若是run，terminal會看不到create的平均delay，所以我把create和read在這function裡寫到一起，前一個獨立出來
+===============================
+作業三新增
+·LPUSH()
+左側增加一個元素
+·RPUSH()
+從右側push
+·LPOP()
+從左側pop
+·RPOP()
+從右側pop
+·LLEN()
+Double linked list的長度
+·showList()
+展示該double linked list 所有的元素
+·freeDLL()
+釋放double linked list
+·LRANGE()
+提供範圍內元素

@@ -10,12 +10,12 @@
 
 #define INITIAL_TABLE_SIZE 5000 
 #define LOAD_FACTOR 0.8 
-#define INDEX_LENGTH 50 //
+//#define INDEX_LENGTH 50 //
 #define ROTL32(x, y) (((x) << (y)) | ((x) >> (32 - (y)))
 #define SEED 40
 #define LENGTH 10
 
-
+//int INDEX_LENGTH;
 typedef struct KeyValue{
     char key[LENGTH+1];
     char value[LENGTH+1];
@@ -44,10 +44,10 @@ extern unsigned int LEFT_KEY;
 
 
 //function name
-unsigned int main_hash_function(char* key);
+extern unsigned int main_hash_function(char* key);
 
 //char* generate_random_string(int length);
-uint16_t MurmurHash3_x86_32( void *key, int len, uint32_t seed) ;
+extern uint16_t MurmurHash3_x86_32( void *key, int len, uint32_t seed) ;
 struct KeyValue* create_KV(char* key,char* value);
 struct HashTable* initHashTable(void);
 void resize(HashTable* ht);

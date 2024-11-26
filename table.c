@@ -2,7 +2,7 @@
 
 unsigned int LEFT_KEY=0;
 //DataBase index[INDEX_LENGTH];
-
+int INDEX_LENGTH=50;
 // hash function for database->index[]
 unsigned int main_hash_function(char* key) //
 {
@@ -123,28 +123,13 @@ struct HashTable* initHashTable(void)
         printf("create table failed. \n");
         return NULL;
     }
-        //ht->table[1000] = (char*)malloc(2);
     for (int i = 0; i < ht->tablesize; i++)
     {
-        // ht->table[i]=(struct KeyValue*)malloc(sizeof(struct KeyValue));
-        // if (ht->table[i] == NULL) 
-        // {
-        //     for (int j = 0; j < i; j++) 
-        //     {
-        //         free(ht->table[j]);
-        //     }
-        //     free(ht->table);
-        //     free(ht);
-        //     return NULL;
-        // }
-        
         // ht->table[i]->key[0]='\0';
         // ht->table[i]->value[0]='\0';
         ht->table[i] = create_KV("", "");
         ht->table[i]->isDeleted=0;
         //ht->table[i] = create_KV(NULL,NULL);
-        
-
     }
     ht->size =0;
     return ht;
